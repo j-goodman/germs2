@@ -147,8 +147,10 @@ Cell.prototype.fleePredators = function () {
 Cell.prototype.checkForPrey = function () {
   var dd;
   for (dd=0 ; dd < objects.length ; dd++) {
-    if (objects[dd] && (objects[dd].autotroph || objects[dd].foodChainPlace < this.foodChainPlace)) {
-      if (Util.distanceBetween(objects[dd].pos, this.pos) < this.radius + objects[dd].radius) {
+    if (objects[dd] && (objects[dd].autotroph ||
+        objects[dd].foodChainPlace < this.foodChainPlace)) {
+      if (Util.distanceBetween(objects[dd].pos, this.pos) <
+          this.radius + objects[dd].radius) {
         this.carnivorize(objects[dd]);
       }
     }
@@ -190,7 +192,13 @@ Cell.prototype.replicate = function () {
   for (ee=0 ; ee < litter ; ee++) {
     randox = 0-this.spread/2+Math.random()*this.spread;
     randoy = 0-this.spread/2+Math.random()*this.spread;
-    objects.push(new Cell(objects.length, this.pos.x+randox, this.pos.y+randoy, this.radius/litter, this.replicateDNA(this.dna)));
+    objects.push(new Cell(
+      objects.length,
+      this.pos.x+randox,
+      this.pos.y+randoy,
+      this.radius/litter,
+      this.replicateDNA(this.dna)
+    ));
   }
   this.destroy();
 };
