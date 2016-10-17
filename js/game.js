@@ -1,5 +1,5 @@
 Window.newGame = function () {
-  var initializeCanvas; var initializeKeyControls; var initializeWorld; var intervalFunction; var play;
+  var initializeCanvas; var initializeKeyControls; var initializeWorld; var intervalFunction; var play; var randomDNA; var seedCells;
   // 1. REQUIRE DEPENDENCIES
   var objects; var Cell;
   objects = require('./objects.js');
@@ -10,8 +10,8 @@ Window.newGame = function () {
     window.onload = function () {
       var canvas; var ctx;
       canvas = document.getElementById("canvas");
-      canvas.height = window.innerHeight*0.96;
-      canvas.width = window.innerWidth*0.96;
+      canvas.height = window.innerHeight*0.97;
+      canvas.width = window.innerWidth*0.97;
       ctx = canvas.getContext('2d');
       this.canvas = canvas;
       this.ctx = ctx;
@@ -19,8 +19,8 @@ Window.newGame = function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }.bind(this);
     window.onresize = function () {
-      canvas.height = window.innerHeight*0.96;
-      canvas.width = window.innerWidth*0.96;
+      canvas.height = window.innerHeight*0.97;
+      canvas.width = window.innerWidth*0.97;
     };
     window.time = 0;
   };
@@ -28,17 +28,41 @@ Window.newGame = function () {
   // 3. INITIALIZE KEY CONTROLS
   initializeKeyControls = function () {};
 
+  randomDNA = function () {
+    var alfa; var string;
+    alfa = ['A','B','C','D','E','F','G','H','I','J',];
+    string = '';
+    while (string.length < 12) {
+      string += (alfa[Math.floor(Math.random()*alfa.length)]);
+    }
+    return string;
+  };
+
+  seedCells = function (dna, radius, count) {
+    var ff;
+    for (ff=0 ; ff < count ; ff++) {
+      objects.push(new Cell(
+        objects.length,
+        Math.random()*window.innerWidth*0.97,
+        Math.random()*window.innerHeight*0.97,
+        radius,
+        dna
+      ));
+    }
+  };
+
   // 4. INITIALIZE WORLD
   initializeWorld = function () {
-    var ff; var count;
-    for (ff=0 ; ff < 4 ; ff++) {
-      objects.push(new Cell(objects.length, Math.random()*window.innerWidth*0.96, Math.random()*window.innerHeight*0.96, 7, 'BJABADAEEHB'));
-    }
+    seedCells('AJAAADAEDFCH', 3, 32);
+    seedCells('AAJEEHCHDBDG', 5, 16);
+    seedCells('JAACFIEFCFGG', 4, 6);
+    seedCells(randomDNA(), 3, 20);
+    seedCells(randomDNA(), 3, 20);
+    seedCells(randomDNA(), 3, 20);
   };
 
   // 5. DEFINE INTERVAL FUNCTION
   intervalFunction = function () {
-    window.time++;
     window.cooldown = true;
     var xx;
     ctx.fillStyle = '#000000';
@@ -51,14 +75,10 @@ Window.newGame = function () {
           objects[xx].draw(ctx);
           objects[xx].act();
         }
-        if (!window.time%500) {
-          if (objects[xx].pos.x > window.innerWidth  || objects[xx].pos.x < 0 ||
-              objects[xx].pos.y > window.innerHeight || objects[xx].pos.y < 0) {
-            objects[xx].destroy();
-          }
-        }
       }
     }
+    console.log(window.time, objects.length);
+    window.time++;
   };
 
   // 5. PLAY

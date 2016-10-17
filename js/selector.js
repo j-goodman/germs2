@@ -1,16 +1,16 @@
-var Clicker; var objects;
+var Selector; var objects;
 
 objects = require('./objects.js');
 
-Clicker = function (index) {
+Selector = function (index) {
   this.index = index;
-  this.name = 'clicker';
+  this.name = 'selector';
   this.upperLeft = {x: 0, y: 0};
   this.lowerRight = {x: 0, y: 0};
   this.active = false;
 };
 
-Clicker.prototype.init = function () {
+Selector.prototype.init = function () {
   var isBetween;
 
   isBetween = function (checkPos, onePos, twoPos) {
@@ -77,7 +77,7 @@ Clicker.prototype.init = function () {
   }.bind(this);
 };
 
-Clicker.prototype.draw = function (ctx) {
+Selector.prototype.draw = function (ctx) {
   if (this.active) {
     ctx.rect(
       this.upperLeft.x,
@@ -90,8 +90,8 @@ Clicker.prototype.draw = function (ctx) {
   }
 };
 
-Clicker.prototype.act = function () {
+Selector.prototype.act = function () {
 
 };
 
-module.exports = Clicker;
+module.exports = Selector;

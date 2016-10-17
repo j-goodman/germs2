@@ -35,12 +35,13 @@ Cell = function (index, x, y, radius, dna) {
   this.efficiency = (alfa.indexOf(this.dna.slice(7,8))+1)/100;
   this.preySeeking = threeQuartAlfa.includes(this.dna.slice(8,9));
   this.predatorFleeing = halfAlfa.includes(this.dna.slice(9,10));
-  this.sightRadius = alfa.indexOf(this.dna.slice(10,11))*30;
+  this.sightRadius = alfa.indexOf(this.dna.slice(10,11))*40;
+  this.spread = alfa.indexOf(this.dna.slice(11,12))*7;
+  this.maxY = window.innerHeight*0.97;
+  this.maxX = window.innerWidth*0.97;
   // console.log(this);
 };
 
-// Autotroph: AJADABAEBCB
-// Herbivore: AAJHBIBDFEF
 // 0: redness (A-J)
 // 1: greenness (A-J)
 // 2: blueness (A-J)
@@ -51,7 +52,8 @@ Cell = function (index, x, y, radius, dna) {
 // 7: consumption efficiency (A-J)
 // 8: prey seeking (A-E/F-J)
 // 9: predator fleeing (A-E/F-J)
-// 10: sightRadius (A-E/F-J)
+// 10: sight radius (A-E/F-J)
+// 11: spread radius on replication (A-J)
 
 Cell.prototype.draw = function (ctx) {
   ctx.beginPath();
@@ -80,13 +82,27 @@ Cell.prototype.act = function () {
     this.pos.x += this.speed.x;
     this.pos.y += this.speed.y;
   }
-  if (this.age > 1000) {
-    this.radius -= this.splitRadius/100;
+  if (this.age > 2000) {
+    this.radius -= this.efficiency/2;
+  }
+  this.wrap();
+};
+
+Cell.prototype.wrap = function () {
+  if (this.pos.x > this.maxX+this.radius) {
+    this.pos.x = 0;
+  } else if (this.pos.x < 0-this.radius) {
+    this.pos.x = this.maxX;
+  }
+  if (this.pos.y > this.maxY+this.radius) {
+    this.pos.y = 0;
+  } else if (this.pos.y < 0-this.radius) {
+    this.pos.y = this.maxY;
   }
 };
 
 Cell.prototype.autotrophize = function () {
-  this.radius += this.efficiency/10;
+  this.radius += this.efficiency/14;
 };
 
 Cell.prototype.carnivorize = function (target) {
@@ -95,26 +111,36 @@ Cell.prototype.carnivorize = function (target) {
 };
 
 Cell.prototype.seekPrey = function () {
-  var bb;
+  var bb; var target;
   for (bb=0 ; bb < objects.length ; bb++) {
     if (objects[bb] && (objects[bb].autotroph || objects[bb].foodChainPlace < this.foodChainPlace)) {
       if (Util.distanceBetween(objects[bb].pos, this.pos) < this.sightRadius) {
-        this.goTo(objects[bb].pos);
+        if (!target || (Util.distanceBetween(objects[bb].pos, this.pos)/objects[bb].radius <
+                       (Util.distanceBetween(target.pos, this.pos))/target.radius)) {
+          target = objects[bb];
+        }
       }
     }
+  }
+  if (target) {
+    this.goTo(target.pos);
   }
 };
 
 Cell.prototype.fleePredators = function () {
-  var cc;
+  var cc; var predator;
   for (cc=0 ; cc < objects.length ; cc++) {
     if (objects[cc] && (this.autotroph && !objects[cc].autotroph || !objects[cc].autotroph && objects[cc].foodChainPlace > this.foodChainPlace)) {
-      if (Util.distanceBetween(objects[cc].pos, this.pos) < this.sightRadius) {
-        this.goTo(objects[cc].pos);
-        this.speed.x *= (-1);
-        this.speed.y *= (-1);
+      if (Util.distanceBetween(objects[cc].pos, this.pos) < this.sightRadius &&
+         (!predator || (Util.distanceBetween(objects[cc].pos, this.pos) < (Util.distanceBetween(predator.pos, this.pos))))) {
+        predator = objects[cc];
       }
     }
+  }
+  if (predator) {
+    this.goTo(predator.pos);
+    this.speed.x *= (-1);
+    this.speed.y *= (-1);
   }
 };
 
@@ -133,8 +159,8 @@ var copyTrait;
 copyTrait = function (char) {
   var idx;
   idx = alfa.indexOf(char);
-  if (Math.round(Math.random())) {
-    idx = idx-1.5+Math.random()*3;
+  if (Math.round(Math.random()*2)) {
+    idx = idx-1+Math.random()*2;
     idx = Math.round(idx);
     if (idx < 0) { idx = 0; }
     if (idx > 9) { idx = 9; }
@@ -160,9 +186,10 @@ Cell.prototype.replicate = function () {
   }
   var litter; var randox; var randoy; var ee;
   litter = 2;
+  if (!this.autotroph) { litter = 3; }
   for (ee=0 ; ee < litter ; ee++) {
-    randox = 0-8+Math.random()*16;
-    randoy = 0-8+Math.random()*16;
+    randox = 0-this.spread/2+Math.random()*this.spread;
+    randoy = 0-this.spread/2+Math.random()*this.spread;
     objects.push(new Cell(objects.length, this.pos.x+randox, this.pos.y+randoy, this.radius/litter, this.replicateDNA(this.dna)));
   }
   this.destroy();
