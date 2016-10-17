@@ -1,10 +1,11 @@
 Window.newGame = function () {
-  var initializeCanvas; var initializeKeyControls; var initializeWorld;
+  var initializeCanvas; var initializeWorld;
   var intervalFunction; var play; var randomDNA; var seedCells;
   // 1. REQUIRE DEPENDENCIES //
-  var objects; var Cell;
+  var objects; var Cell; var Person;
   objects = require('./objects.js');
   Cell = require('./cell.js');
+  Person = require('./person.js');
 
   // 2. INITIALIZE CANVAS //
   initializeCanvas = function () {
@@ -26,10 +27,7 @@ Window.newGame = function () {
     window.time = 0;
   };
 
-  // 3. INITIALIZE KEY CONTROLS //
-  initializeKeyControls = function () {};
-
-  // 4. SET UP SEEDING HELPER FUNCTIONS //
+  // 3. SET UP SEEDING HELPER FUNCTIONS //
   randomDNA = function () {
     var alfa; var string;
     alfa = ['A','B','C','D','E','F','G','H','I','J',];
@@ -53,7 +51,7 @@ Window.newGame = function () {
     }
   };
 
-  // 5. INITIALIZE WORLD //
+  // 4. INITIALIZE WORLD //
   initializeWorld = function () {
     seedCells('AJAAADAEDFCH', 3, 100); // Small green autotrophs
     seedCells('AAJEEHCHDBDG', 5, 16); // Big blue mid-level carnivores
@@ -61,9 +59,16 @@ Window.newGame = function () {
     seedCells(randomDNA(), Math.random()*5+1, 20); // Random ×3
     seedCells(randomDNA(), Math.random()*5+1, 20);
     seedCells(randomDNA(), Math.random()*5+1, 20);
+    objects.push(new Person(
+      objects.length,
+      Math.random()*window.innerWidth*0.97,
+      Math.random()*window.innerHeight*0.97,
+      12,
+      'IIIJHJCHDBDG'
+    ));
   };
 
-  // 6. DEFINE INTERVAL FUNCTION //
+  // 5. DEFINE INTERVAL FUNCTION //
   intervalFunction = function () {
     window.cooldown = true;
     var xx;
@@ -79,11 +84,10 @@ Window.newGame = function () {
         }
       }
     }
-    console.log(window.time, objects.length);
     window.time++;
   };
 
-  // 7. PLAY //
+  // 6. PLAY //
   play = function () {
     var interval; var xx;
     initializeWorld();

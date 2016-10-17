@@ -1,6 +1,7 @@
-var Person; var Util; var objects;
+var Person; var Util; var Cell; var objects;
 objects = require('./objects.js');
 Util = require('./util.js');
+Cell = require('./cell.js');
 var alfa; var halfAlfa;
 alfa = ['A','B','C','D','E','F','G','H','I','J',];
 halfAlfa = ['A','B','C','D','E',];
@@ -39,15 +40,61 @@ Person = function (index, x, y, radius, dna) {
   this.spread = alfa.indexOf(this.dna.slice(11,12))*7;
   this.maxY = window.innerHeight*0.97;
   this.maxX = window.innerWidth*0.97;
-  // console.log(this);
+  this.direction = 0;//Math.random()*360;
+  this.initializeKeyControls = function () {
+    window.onkeydown = function (e) {
+      if (e.keyCode === 37) { //left
+        this.spin = -5;
+      }
+      if (e.keyCode === 39) { //right
+        this.spin = 5;
+      }
+      if (e.keyCode === 38) { //up
+        this.running = true;
+      }
+    }.bind(this);
+    window.onkeyup = function (e) {
+      if (e.keyCode === 37 || e.keyCode === 39) {
+        this.spin = 0;
+      }
+      if (e.keyCode === 38) {
+        this.speed.x = 0;
+        this.speed.y = 0;
+        this.running = false;
+      }
+    }.bind(this);
+  };
+  this.initializeKeyControls();
 };
 
+Util.inherits(Person, Cell);
+
+
 Person.prototype.draw = function (ctx) {
+  var rad = 2*Math.PI/360;
   ctx.beginPath();
-  ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2*Math.PI);
+  ctx.arc(this.pos.x, this.pos.y, this.radius, (58+this.direction)*rad, (297+this.direction)*rad);
   ctx.fillStyle = this.color;
   ctx.fill();
 };
 
+Person.prototype.act = function () {
+  if (this.spin) {
+    this.direction += this.spin;
+  }
+  this.pos.x += this.speed.x;
+  this.pos.y += this.speed.y;
+  if (this.running) {
+    this.speed.x = this.agility * Math.cos(this.direction * Math.PI/180);
+    this.speed.y = this.agility * Math.sin(this.direction * Math.PI/180);
+  }
+  if (this.autotroph) {
+    this.autotrophize();
+  } else {
+    // if (this.radius < 48) {
+      this.checkForPrey();
+    // }
+  }
+};
 
 module.exports = Person;

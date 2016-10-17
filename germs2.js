@@ -45,12 +45,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	Window.newGame = function () {
-	  var initializeCanvas; var initializeKeyControls; var initializeWorld;
+	  var initializeCanvas; var initializeWorld;
 	  var intervalFunction; var play; var randomDNA; var seedCells;
 	  // 1. REQUIRE DEPENDENCIES //
-	  var objects; var Cell;
+	  var objects; var Cell; var Person;
 	  objects = __webpack_require__(1);
 	  Cell = __webpack_require__(2);
+	  Person = __webpack_require__(4);
 	
 	  // 2. INITIALIZE CANVAS //
 	  initializeCanvas = function () {
@@ -72,10 +73,7 @@
 	    window.time = 0;
 	  };
 	
-	  // 3. INITIALIZE KEY CONTROLS //
-	  initializeKeyControls = function () {};
-	
-	  // 4. SET UP SEEDING HELPER FUNCTIONS //
+	  // 3. SET UP SEEDING HELPER FUNCTIONS //
 	  randomDNA = function () {
 	    var alfa; var string;
 	    alfa = ['A','B','C','D','E','F','G','H','I','J',];
@@ -99,7 +97,7 @@
 	    }
 	  };
 	
-	  // 5. INITIALIZE WORLD //
+	  // 4. INITIALIZE WORLD //
 	  initializeWorld = function () {
 	    seedCells('AJAAADAEDFCH', 3, 100); // Small green autotrophs
 	    seedCells('AAJEEHCHDBDG', 5, 16); // Big blue mid-level carnivores
@@ -107,9 +105,16 @@
 	    seedCells(randomDNA(), Math.random()*5+1, 20); // Random ×3
 	    seedCells(randomDNA(), Math.random()*5+1, 20);
 	    seedCells(randomDNA(), Math.random()*5+1, 20);
+	    objects.push(new Person(
+	      objects.length,
+	      Math.random()*window.innerWidth*0.97,
+	      Math.random()*window.innerHeight*0.97,
+	      12,
+	      'IIIJHJCHDBDG'
+	    ));
 	  };
 	
-	  // 6. DEFINE INTERVAL FUNCTION //
+	  // 5. DEFINE INTERVAL FUNCTION //
 	  intervalFunction = function () {
 	    window.cooldown = true;
 	    var xx;
@@ -125,11 +130,10 @@
 	        }
 	      }
 	    }
-	    console.log(window.time, objects.length);
 	    window.time++;
 	  };
 	
-	  // 7. PLAY //
+	  // 6. PLAY //
 	  play = function () {
 	    var interval; var xx;
 	    initializeWorld();
@@ -394,6 +398,112 @@
 	};
 	
 	module.exports = Util;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Person; var Util; var Cell; var objects;
+	objects = __webpack_require__(1);
+	Util = __webpack_require__(3);
+	Cell = __webpack_require__(2);
+	var alfa; var halfAlfa;
+	alfa = ['A','B','C','D','E','F','G','H','I','J',];
+	halfAlfa = ['A','B','C','D','E',];
+	threeQuartAlfa = ['A','B','C','D','E','F','G'];
+	
+	Person = function (index, x, y, radius, dna) {
+	  this.index = index;
+	  this.pos = {
+	    x: x,
+	    y: y,
+	  };
+	  this.speed = {
+	    x: 0,
+	    y: 0,
+	  };
+	  this.age = 0;
+	  this.dna = dna;
+	  this.radius = radius;
+	  this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
+	  this.agility = alfa.indexOf(this.dna.slice(4,5))/12;
+	  this.autotroph = halfAlfa.includes(this.dna.slice(5,6));
+	  var r; var g; var b; var colors;
+	  r = (alfa.indexOf(this.dna.slice(0,1))*28).toString(16);
+	  g = (alfa.indexOf(this.dna.slice(1,2))*28).toString(16);
+	  b = (alfa.indexOf(this.dna.slice(2,3))*28).toString(16);
+	  colors = [r,g,b];
+	  if (r.length < 2) { r = '0' + r; }
+	  if (g.length < 2) { g = '0' + g; }
+	  if (b.length < 2) { b = '0' + b; }
+	  this.color = '#'+r+g+b;
+	  this.foodChainPlace = alfa.indexOf(this.dna.slice(6,7));
+	  this.efficiency = (alfa.indexOf(this.dna.slice(7,8))+1)/100;
+	  this.preySeeking = threeQuartAlfa.includes(this.dna.slice(8,9));
+	  this.predatorFleeing = halfAlfa.includes(this.dna.slice(9,10));
+	  this.sightRadius = alfa.indexOf(this.dna.slice(10,11))*40;
+	  this.spread = alfa.indexOf(this.dna.slice(11,12))*7;
+	  this.maxY = window.innerHeight*0.97;
+	  this.maxX = window.innerWidth*0.97;
+	  this.direction = 0;//Math.random()*360;
+	  this.initializeKeyControls = function () {
+	    window.onkeydown = function (e) {
+	      if (e.keyCode === 37) { //left
+	        this.spin = -5;
+	      }
+	      if (e.keyCode === 39) { //right
+	        this.spin = 5;
+	      }
+	      if (e.keyCode === 38) { //up
+	        this.running = true;
+	      }
+	    }.bind(this);
+	    window.onkeyup = function (e) {
+	      if (e.keyCode === 37 || e.keyCode === 39) {
+	        this.spin = 0;
+	      }
+	      if (e.keyCode === 38) {
+	        this.speed.x = 0;
+	        this.speed.y = 0;
+	        this.running = false;
+	      }
+	    }.bind(this);
+	  };
+	  this.initializeKeyControls();
+	};
+	
+	Util.inherits(Person, Cell);
+	
+	
+	Person.prototype.draw = function (ctx) {
+	  var rad = 2*Math.PI/360;
+	  ctx.beginPath();
+	  ctx.arc(this.pos.x, this.pos.y, this.radius, (58+this.direction)*rad, (297+this.direction)*rad);
+	  ctx.fillStyle = this.color;
+	  ctx.fill();
+	};
+	
+	Person.prototype.act = function () {
+	  if (this.spin) {
+	    this.direction += this.spin;
+	  }
+	  this.pos.x += this.speed.x;
+	  this.pos.y += this.speed.y;
+	  if (this.running) {
+	    this.speed.x = this.agility * Math.cos(this.direction * Math.PI/180);
+	    this.speed.y = this.agility * Math.sin(this.direction * Math.PI/180);
+	  }
+	  if (this.autotroph) {
+	    this.autotrophize();
+	  } else {
+	    // if (this.radius < 48) {
+	      this.checkForPrey();
+	    // }
+	  }
+	};
+	
+	module.exports = Person;
 
 
 /***/ }
