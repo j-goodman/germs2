@@ -102,7 +102,7 @@ Cell.prototype.wrap = function () {
 };
 
 Cell.prototype.autotrophize = function () {
-  this.radius += this.efficiency/14;
+  this.radius += this.efficiency/12;
 };
 
 Cell.prototype.carnivorize = function (target) {
