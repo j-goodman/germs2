@@ -51,21 +51,39 @@ Window.newGame = function () {
     }
   };
 
+  cull = function (maxObjects) {
+    var aa;
+    if (objects.length > maxObjects) {
+      newObj = [];
+      for (aa=0 ; aa < objects.length ; aa++) {
+        if (objects[aa]) {
+          newObj.push(objects[aa]);
+        }
+      }
+      objects = newObj;
+      if (objects.length+100 > maxObjects) {
+        for (aa=0 ; aa < 100 ; aa++) {
+          objects[aa] = undefined;
+        }
+      }
+    }
+  };
+
   // 4. INITIALIZE WORLD //
   initializeWorld = function () {
-    seedCells('AJAAADAEDFCH', 3, 100); // Small green autotrophs
-    seedCells('AAJEEHCHDBDG', 5, 16); // Big blue mid-level carnivores
-    seedCells('JAACFIEFCFGG', 4, 6); // Medium sized red top-level predators
+    seedCells('AJAAADAEDFCHA', 3, 100); // Small green autotrophs
+    seedCells('AAJEEHCHDBDGB', 5, 20); // Big blue mid-level carnivores
+    seedCells('JAACFIEFCFGGB', 4, 5); // Medium sized red top-level predators
     seedCells(randomDNA(), Math.random()*5+1, 20); // Random ×3
     seedCells(randomDNA(), Math.random()*5+1, 20);
     seedCells(randomDNA(), Math.random()*5+1, 20);
-    objects.push(new Person(
-      objects.length,
-      Math.random()*window.innerWidth*0.97,
-      Math.random()*window.innerHeight*0.97,
-      12,
-      'IIIJHJCHDBDG'
-    ));
+    // objects.push(new Person(
+    //   objects.length,
+    //   Math.random()*window.innerWidth*0.97,
+    //   Math.random()*window.innerHeight*0.97,
+    //   12,
+    //   'AAJEJHDHDBDJB'
+    // ));
   };
 
   // 5. DEFINE INTERVAL FUNCTION //
@@ -84,6 +102,7 @@ Window.newGame = function () {
         }
       }
     }
+    // cull(2000);
     window.time++;
   };
 

@@ -20,7 +20,7 @@ Cell = function (index, x, y, radius, dna) {
   this.dna = dna;
   this.radius = radius;
   this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
-  this.agility = alfa.indexOf(this.dna.slice(4,5))/12;
+  this.agility = alfa.indexOf(this.dna.slice(4,5))/8;
   this.autotroph = halfAlfa.includes(this.dna.slice(5,6));
   var r; var g; var b; var colors;
   r = (alfa.indexOf(this.dna.slice(0,1))*28).toString(16);
@@ -36,7 +36,8 @@ Cell = function (index, x, y, radius, dna) {
   this.preySeeking = threeQuartAlfa.includes(this.dna.slice(8,9));
   this.predatorFleeing = halfAlfa.includes(this.dna.slice(9,10));
   this.sightRadius = alfa.indexOf(this.dna.slice(10,11))*40;
-  this.spread = alfa.indexOf(this.dna.slice(11,12))*7;
+  this.spread = alfa.indexOf(this.dna.slice(11,12))*5;
+  this.litterSize = Math.floor(alfa.indexOf(this.dna.slice(12,13))/2)+2;
   this.maxY = window.innerHeight*0.97;
   this.maxX = window.innerWidth*0.97;
   // console.log(this);
@@ -54,6 +55,7 @@ Cell = function (index, x, y, radius, dna) {
 // 9: predator fleeing (A-E/F-J)
 // 10: sight radius (A-E/F-J)
 // 11: spread radius on replication (A-J)
+// 12: litter size (A-J)
 
 Cell.prototype.draw = function (ctx) {
   ctx.beginPath();
@@ -82,7 +84,7 @@ Cell.prototype.act = function () {
     this.pos.x += this.speed.x;
     this.pos.y += this.speed.y;
   }
-  if (this.age > 2000) {
+  if (this.age > 1600) {
     this.radius -= this.efficiency/2;
   }
   this.wrap();
@@ -187,8 +189,11 @@ Cell.prototype.replicate = function () {
     window.cooldown = false;
   }
   var litter; var randox; var randoy; var ee;
-  litter = 2;
-  if (!this.autotroph) { litter = 3; }
+  litter = this.litterSize;
+  if (this.autotroph) {
+    litter = Math.round(this.litterSize/4);
+  }
+  if (litter < 2) { litter = 2; }
   for (ee=0 ; ee < litter ; ee++) {
     randox = 0-this.spread/2+Math.random()*this.spread;
     randoy = 0-this.spread/2+Math.random()*this.spread;
