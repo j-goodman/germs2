@@ -117,11 +117,11 @@
 	
 	  // 4. INITIALIZE WORLD //
 	  initializeWorld = function () {
-	    seedCells('AJAAADAEDFCHA', 3, 100); // Small green autotrophs
+	    seedCells('AJAAADAEDFCHA', 12, 22); // Small green autotrophs
 	    // seedCells('AAJEEHCHDBDGB', 5, 20); // Big blue mid-level carnivores
-	    seedCells('JAACHIGFCFGGB', 4, 13); // Medium sized red top-level predators
+	    seedCells('JAACHIGFCFGGB', 4, 3); // Medium sized red top-level predators
 	    // seedCells(randomDNA(), Math.random()*5+1, 20); // Random ×3
-	    seedCells(randomDNA(), Math.random()*5+1, 20);
+	    seedCells(randomDNA(), Math.random()*5+1, 3);
 	    // seedCells(randomDNA(), Math.random()*5+1, 20);
 	    objects.push(new Person(
 	      objects.length,
