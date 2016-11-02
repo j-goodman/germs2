@@ -118,18 +118,18 @@
 	  // 4. INITIALIZE WORLD //
 	  initializeWorld = function () {
 	    seedCells('AJAAADAEDFCHA', 3, 100); // Small green autotrophs
-	    seedCells('AAJEEHCHDBDGB', 5, 20); // Big blue mid-level carnivores
+	    // seedCells('AAJEEHCHDBDGB', 5, 20); // Big blue mid-level carnivores
 	    seedCells('JAACFIEFCFGGB', 4, 5); // Medium sized red top-level predators
 	    seedCells(randomDNA(), Math.random()*5+1, 20); // Random ×3
 	    seedCells(randomDNA(), Math.random()*5+1, 20);
 	    seedCells(randomDNA(), Math.random()*5+1, 20);
-	    // objects.push(new Person(
-	    //   objects.length,
-	    //   Math.random()*window.innerWidth*0.97,
-	    //   Math.random()*window.innerHeight*0.97,
-	    //   12,
-	    //   'AAJEJHDHDBDJB'
-	    // ));
+	    objects.push(new Person(
+	      objects.length,
+	      Math.random()*window.innerWidth*0.97,
+	      Math.random()*window.innerHeight*0.97,
+	      12,
+	      'AAJEJHDHDBDJB'
+	    ));
 	  };
 	
 	  // 5. DEFINE INTERVAL FUNCTION //
@@ -199,7 +199,7 @@
 	  this.dna = dna;
 	  this.radius = radius;
 	  this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
-	  this.agility = alfa.indexOf(this.dna.slice(4,5))/8;
+	  this.agility = alfa.indexOf(this.dna.slice(4,5))/4;
 	  this.autotroph = halfAlfa.includes(this.dna.slice(5,6));
 	  var r; var g; var b; var colors;
 	  r = (alfa.indexOf(this.dna.slice(0,1))*28).toString(16);
@@ -451,7 +451,7 @@
 	  this.dna = dna;
 	  this.radius = radius;
 	  this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
-	  this.agility = alfa.indexOf(this.dna.slice(4,5))/6;
+	  this.agility = alfa.indexOf(this.dna.slice(4,5))/4;
 	  this.autotroph = halfAlfa.includes(this.dna.slice(5,6));
 	  var r; var g; var b; var colors;
 	  r = (alfa.indexOf(this.dna.slice(0,1))*28).toString(16);
@@ -475,10 +475,10 @@
 	  this.initializeKeyControls = function () {
 	    window.onkeydown = function (e) {
 	      if (e.keyCode === 37) { //left
-	        this.spin = -2;
+	        this.spin = -5;
 	      }
 	      if (e.keyCode === 39) { //right
-	        this.spin = 2;
+	        this.spin = 5;
 	      }
 	      if (e.keyCode === 38) { //up
 	        this.running = true;

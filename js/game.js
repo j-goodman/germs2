@@ -71,19 +71,19 @@ Window.newGame = function () {
 
   // 4. INITIALIZE WORLD //
   initializeWorld = function () {
-    seedCells('AJAAADAEDFCHA', 3, 100); // Small green autotrophs
-    seedCells('AAJEEHCHDBDGB', 5, 20); // Big blue mid-level carnivores
+    seedCells('AJAAADAEDFCHA', 3, 20); // Small green autotrophs
+    // seedCells('AAJEEHCHDBDGB', 5, 20); // Big blue mid-level carnivores
     seedCells('JAACFIEFCFGGB', 4, 5); // Medium sized red top-level predators
-    seedCells(randomDNA(), Math.random()*5+1, 20); // Random ×3
-    seedCells(randomDNA(), Math.random()*5+1, 20);
-    seedCells(randomDNA(), Math.random()*5+1, 20);
-    // objects.push(new Person(
-    //   objects.length,
-    //   Math.random()*window.innerWidth*0.97,
-    //   Math.random()*window.innerHeight*0.97,
-    //   12,
-    //   'AAJEJHDHDBDJB'
-    // ));
+    seedCells(randomDNA(), Math.random()*5+1, 12); // Random ×3
+    seedCells(randomDNA(), Math.random()*5+1, 12);
+    seedCells(randomDNA(), Math.random()*5+1, 12);
+    objects.push(new Person(
+      objects.length,
+      Math.random()*window.innerWidth*0.97,
+      Math.random()*window.innerHeight*0.97,
+      12,
+      'AAJEJHDHDBDJB'
+    ));
   };
 
   // 5. DEFINE INTERVAL FUNCTION //

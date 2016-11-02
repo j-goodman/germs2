@@ -20,7 +20,7 @@ Cell = function (index, x, y, radius, dna) {
   this.dna = dna;
   this.radius = radius;
   this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
-  this.agility = alfa.indexOf(this.dna.slice(4,5))/8;
+  this.agility = alfa.indexOf(this.dna.slice(4,5))/4;
   this.autotroph = halfAlfa.includes(this.dna.slice(5,6));
   var r; var g; var b; var colors;
   r = (alfa.indexOf(this.dna.slice(0,1))*28).toString(16);
