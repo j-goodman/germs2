@@ -71,9 +71,9 @@ Window.newGame = function () {
 
   // 4. INITIALIZE WORLD //
   initializeWorld = function () {
-    seedCells('AJAAADACEDFCHA', 3, 30); // Small green autotrophs
+    seedCells('AJAAADACEDFCHA', 6, 30); // Small green autotrophs
     // seedCells('AAJEJHDGHDBDJB', 5, 20); // Big blue mid-level carnivores
-    seedCells('JAACFIECFCFGGB', 4, 7); // Medium sized red top-level predators
+    seedCells('JAACGIECFCFHGB', 4, 7); // Medium sized red top-level predators
     seedCells(randomDNA(), Math.random()*5+1, 12); // Random ×4
     seedCells(randomDNA(), Math.random()*5+1, 12);
     seedCells(randomDNA(), Math.random()*5+1, 12);

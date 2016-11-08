@@ -117,9 +117,9 @@
 	
 	  // 4. INITIALIZE WORLD //
 	  initializeWorld = function () {
-	    seedCells('AJAAADACEDFCHA', 3, 30); // Small green autotrophs
+	    seedCells('AJAAADACEDFCHA', 6, 30); // Small green autotrophs
 	    // seedCells('AAJEJHDGHDBDJB', 5, 20); // Big blue mid-level carnivores
-	    seedCells('JAACFIECFCFGGB', 4, 7); // Medium sized red top-level predators
+	    seedCells('JAACGIECFCFHGB', 4, 7); // Medium sized red top-level predators
 	    seedCells(randomDNA(), Math.random()*5+1, 12); // Random ×4
 	    seedCells(randomDNA(), Math.random()*5+1, 12);
 	    seedCells(randomDNA(), Math.random()*5+1, 12);
@@ -228,9 +228,12 @@
 	  if (b.length < 2) { b = '0' + b; }
 	  this.color = '#'+r+g+b;
 	  this.foodChainPlace = alfa.indexOf(this.dna.slice(6,7));
-	  this.omnivorousness = alfa.indexOf(this.dna.slice(7,8))+1;
+	  this.omnivorousness = alfa.indexOf(this.dna.slice(7,8))+3;
 	  if (this.autotroph && this.foodChainPlace > 5) {
 	    this.foodChainPlace -= 4;
+	  }
+	  if (!this.autotroph && this.foodChainPlace < 2) {
+	    this.foodChainPlace += 2;
 	  }
 	  this.efficiency = (alfa.indexOf(this.dna.slice(8,9))+1)/100;
 	  this.preySeeking = threeQuartAlfa.includes(this.dna.slice(9,10));
