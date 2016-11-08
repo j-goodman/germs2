@@ -99,18 +99,9 @@
 	
 	  cull = function (maxObjects) {
 	    var aa;
-	    if (objects.length > maxObjects) {
-	      newObj = [];
-	      for (aa=0 ; aa < objects.length ; aa++) {
-	        if (objects[aa]) {
-	          newObj.push(objects[aa]);
-	        }
-	      }
-	      objects = newObj;
-	      if (objects.length+100 > maxObjects) {
-	        for (aa=0 ; aa < 100 ; aa++) {
-	          objects[aa] = undefined;
-	        }
+	    for (aa=0 ; aa < objects.length ; aa++) {
+	      if (objects[aa]) {
+	        objects[aa].radius = objects[aa].radius*(0.94)-0.05;
 	      }
 	    }
 	  };
@@ -152,11 +143,12 @@
 	  // 5. DEFINE INTERVAL FUNCTION //
 	  intervalFunction = function () {
 	    window.cooldown = true;
-	    var xx;
+	    var xx; var count=0;
 	    ctx.fillStyle = '#000000';
 	    ctx.fillRect(0, 0, canvas.width, canvas.height);
 	    for (xx=0; xx < objects.length; xx++) {
 	      if (objects[xx]) {
+	        count += 1;
 	        if (objects[xx].radius < 0) {
 	          objects[xx].destroy();
 	        } else {
@@ -165,7 +157,10 @@
 	        }
 	      }
 	    }
-	    // cull(2000);
+	    console.log(count);
+	    if (count > 2000) {
+	      cull();
+	    }
 	    window.time++;
 	  };
 	
