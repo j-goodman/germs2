@@ -32,15 +32,15 @@ Cell = function (index, x, y, radius, dna) {
   if (b.length < 2) { b = '0' + b; }
   this.color = '#'+r+g+b;
   this.foodChainPlace = alfa.indexOf(this.dna.slice(6,7));
-  this.efficiency = (alfa.indexOf(this.dna.slice(7,8))+1)/100;
-  this.preySeeking = threeQuartAlfa.includes(this.dna.slice(8,9));
-  this.predatorFleeing = halfAlfa.includes(this.dna.slice(9,10));
-  this.sightRadius = alfa.indexOf(this.dna.slice(10,11))*40;
-  this.spread = alfa.indexOf(this.dna.slice(11,12))*5;
-  this.litterSize = Math.floor(alfa.indexOf(this.dna.slice(12,13))/2)+2;
+  this.omnivorousness = alfa.indexOf(this.dna.slice(7,8));
+  this.efficiency = (alfa.indexOf(this.dna.slice(8,9))+1)/100;
+  this.preySeeking = threeQuartAlfa.includes(this.dna.slice(9,10));
+  this.predatorFleeing = halfAlfa.includes(this.dna.slice(10,11));
+  this.sightRadius = alfa.indexOf(this.dna.slice(11,12))*40;
+  this.spread = alfa.indexOf(this.dna.slice(12,13))*5;
+  this.litterSize = Math.floor(alfa.indexOf(this.dna.slice(13,14))/2)+2;
   this.maxY = window.innerHeight*0.97;
   this.maxX = window.innerWidth*0.97;
-  // console.log(this);
 };
 
 // 0: redness (A-J)
@@ -50,12 +50,13 @@ Cell = function (index, x, y, radius, dna) {
 // 4: agility (A-J)
 // 5: autotroph/carnivore (A-E/F-J)
 // 6: consumption precedence (A-J)
-// 7: consumption efficiency (A-J)
-// 8: prey seeking (A-E/F-J)
-// 9: predator fleeing (A-E/F-J)
-// 10: sight radius (A-E/F-J)
-// 11: spread radius on replication (A-J)
-// 12: litter size (A-J)
+// 7: omnivorousness (A-J)
+// 8: consumption efficiency (A-J)
+// 9: prey seeking (A-E/F-J)
+// 10: predator fleeing (A-E/F-J)
+// 11: sight radius (A-E/F-J)
+// 12: spread radius on replication (A-J)
+// 13: litter size (A-J)
 
 Cell.prototype.draw = function (ctx) {
   ctx.beginPath();
@@ -115,7 +116,8 @@ Cell.prototype.carnivorize = function (target) {
 Cell.prototype.seekPrey = function () {
   var bb; var target;
   for (bb=0 ; bb < objects.length ; bb++) {
-    if (objects[bb] && (objects[bb].autotroph || objects[bb].foodChainPlace < this.foodChainPlace)) {
+    if (objects[bb] && (objects[bb].foodChainPlace < this.foodChainPlace &&
+       objects[bb].foodChainPlace > this.foodChainPlace-this.omnivorousness)) {
       if (Util.distanceBetween(objects[bb].pos, this.pos) < this.sightRadius) {
         if (!target || (Util.distanceBetween(objects[bb].pos, this.pos)/objects[bb].radius <
                        (Util.distanceBetween(target.pos, this.pos))/target.radius)) {
@@ -149,8 +151,9 @@ Cell.prototype.fleePredators = function () {
 Cell.prototype.checkForPrey = function () {
   var dd;
   for (dd=0 ; dd < objects.length ; dd++) {
-    if (objects[dd] && (objects[dd].autotroph ||
-        objects[dd].foodChainPlace < this.foodChainPlace)) {
+    if (objects[dd] && (
+        (objects[dd].foodChainPlace < this.foodChainPlace &&
+         objects[dd].foodChainPlace > this.foodChainPlace-this.omnivorousness))) {
       if (Util.distanceBetween(objects[dd].pos, this.pos) <
           this.radius + objects[dd].radius) {
         this.carnivorize(objects[dd]);
