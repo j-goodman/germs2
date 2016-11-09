@@ -1,4 +1,4 @@
-Window.newGame = function () {
+Window.newGame = function (settings) {
   var initializeCanvas; var initializeWorld;
   var intervalFunction; var play; var randomDNA; var seedCells;
   // 1. REQUIRE DEPENDENCIES //
@@ -9,17 +9,15 @@ Window.newGame = function () {
 
   // 2. INITIALIZE CANVAS //
   initializeCanvas = function () {
-    window.onload = function () {
-      var canvas; var ctx;
-      canvas = document.getElementById("canvas");
-      canvas.height = window.innerHeight*0.97;
-      canvas.width = window.innerWidth*0.97;
-      ctx = canvas.getContext('2d');
-      this.canvas = canvas;
-      this.ctx = ctx;
-      ctx.globalAlpha = 0.9;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }.bind(this);
+    var canvas; var ctx;
+    canvas = document.getElementById("canvas");
+    canvas.height = window.innerHeight*0.97;
+    canvas.width = window.innerWidth*0.97;
+    ctx = canvas.getContext('2d');
+    this.canvas = canvas;
+    this.ctx = ctx;
+    ctx.globalAlpha = 0.9;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     window.onresize = function () {
       canvas.height = window.innerHeight*0.97;
       canvas.width = window.innerWidth*0.97;
@@ -51,31 +49,20 @@ Window.newGame = function () {
     }
   };
 
-  cull = function (maxObjects) {
-    var aa;
-    for (aa=0 ; aa < objects.length ; aa++) {
-      if (objects[aa]) {
-        objects[aa].radius = objects[aa].radius*(0.94)-0.05;
-      }
-    }
-  };
-
   // 4. INITIALIZE WORLD //
   initializeWorld = function () {
-    seedCells('AJAAADACEDFCHA', 6, 30); // Small green autotrophs
-    // seedCells('AAJEJHDGHDBDJB', 5, 20); // Big blue mid-level carnivores
-    seedCells('JAACGIECFCFHGB', 4, 7); // Medium sized red top-level predators
-    seedCells(randomDNA(), Math.random()*5+1, 12); // Random ×4
-    seedCells(randomDNA(), Math.random()*5+1, 12);
-    seedCells(randomDNA(), Math.random()*5+1, 12);
-    seedCells(randomDNA(), Math.random()*5+1, 12);
-    objects.push(new Person(
-      objects.length,
-      Math.random()*window.innerWidth*0.97,
-      Math.random()*window.innerHeight*0.97,
-      12,
-      'AAJEJHDGHDBDJB'
-    ));
+    var xx;
+    for (xx=0 ; xx < settings.cells.length ; xx++) {
+      seedCells(settings.cells[xx].dna, 1, settings.cells[xx].count);
+    }
+    // seedCells(randomDNA(), Math.random()*5+1, 12); // Random
+    // objects.push(new Person(
+    //   objects.length,
+    //   Math.random()*window.innerWidth*0.97,
+    //   Math.random()*window.innerHeight*0.97,
+    //   12,
+    //   'AAJEJHDGHDBDJB'
+    // ));
   };
 
   // 0: redness (A-J)
@@ -103,6 +90,13 @@ Window.newGame = function () {
     for (xx=0; xx < objects.length; xx++) {
       if (objects[xx]) {
         count += 1;
+        if (count > 800) {
+          if (objects[xx-800]) {
+            objects[xx-800].radius -= 0.1;
+          } else {
+            objects[xx].radius -= 0.1;
+          }
+        }
         if (objects[xx].radius < 0) {
           objects[xx].destroy();
         } else {
@@ -111,10 +105,6 @@ Window.newGame = function () {
         }
       }
     }
-    console.log(count);
-    if (count > 2000) {
-      cull();
-    }
     window.time++;
   };
 
@@ -122,10 +112,33 @@ Window.newGame = function () {
   play = function () {
     var interval; var xx;
     initializeWorld();
-    interval = setInterval(intervalFunction, 32);
+    interval = setInterval(intervalFunction, 16);
   };
   initializeCanvas();
   play();
 };
 
-Window.newGame();
+window.onload = function () {
+  var settings = {};
+  var ignition = document.getElementById('ignition');
+  var menu = document.getElementsByClassName('menu')[0];
+  ignition.onclick = function () {
+    menu.className = 'hidden';
+    settings.cells = [
+      {
+        // AUTOTROPHS
+        dna: 'AJAAADACEDFCHA',
+        count: 1,
+      }, {
+        // BLUE HERBIVORES
+        dna: 'AAJEJHDGHDBDJB',
+        count: 0,
+      }, {
+        // RED CARNIVORES
+        dna: 'JAACGIECFCFHGB',
+        count: 0,
+      },
+    ];
+    Window.newGame(settings);
+  };
+};
