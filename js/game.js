@@ -125,25 +125,46 @@ initSoundboard = function (dnaAttrs) {
 };
 
 openSoundboard = function (soundboard, dna) {
-  var dnaAttrs; var sequence;
+  var dnaAttrs; var sequence; var li; var slider;
+  var caption; var needle; var xx; var alfa;
+  alfa = ['A','B','C','D','E','F','G','H','I','J',];
   soundboard.className = 'soundboard activeboard';
   sequence = dna.innerText;
   dnaAttrs = {};
   dnaAttrs.sequence = sequence;
-  dnaAttrs.redness = sequence.slice(0,1);
-  dnaAttrs.greenness = sequence.slice(1,2);
-  dnaAttrs.blueness = sequence.slice(2,3);
-  dnaAttrs.splitRadius = sequence.slice(3,4);
-  dnaAttrs.agility = sequence.slice(4,5);
-  dnaAttrs.autotrophy = sequence.slice(5,6);
-  dnaAttrs.foodChainPlace = sequence.slice(6,7);
-  dnaAttrs.omnivorousness = sequence.slice(7,8);
-  dnaAttrs.efficiency = sequence.slice(8,9);
-  dnaAttrs.preySeeking = sequence.slice(9,10);
-  dnaAttrs.predatorFleeing = sequence.slice(10,11);
-  dnaAttrs.sightRadius = sequence.slice(11,12);
-  dnaAttrs.spreadRadius = sequence.slice(12,13);
-  dnaAttrs.litterSize = sequence.slice(13,14);
+  dnaAttrs['redness'] = sequence.slice(0,1);
+  dnaAttrs['greenness'] = sequence.slice(1,2);
+  dnaAttrs['blueness'] = sequence.slice(2,3);
+  dnaAttrs['splitting radius'] = sequence.slice(3,4);
+  dnaAttrs['speed'] = sequence.slice(4,5);
+  dnaAttrs['autotroph/heterotroph'] = sequence.slice(5,6);
+  dnaAttrs['food chain height'] = sequence.slice(6,7);
+  dnaAttrs['omnivorousness'] = sequence.slice(7,8);
+  dnaAttrs['eating efficiency'] = sequence.slice(8,9);
+  dnaAttrs['prey seeking'] = sequence.slice(9,10);
+  dnaAttrs['predator fleeing'] = sequence.slice(10,11);
+  dnaAttrs['field of vision'] = sequence.slice(11,12);
+  dnaAttrs['reproduction radius'] = sequence.slice(12,13);
+  dnaAttrs['offspring volume'] = sequence.slice(13,14);
+  for (xx=1 ; xx < Object.keys(dnaAttrs).length ; xx++) {
+    // console.log(dnaAttrs[Object.keys(dnaAttrs)[xx]]);
+    li = document.createElement('li');
+    slider = document.createElement('slider');
+    caption = document.createElement('caption');
+    needle = document.createElement('needle');
+    soundboard.appendChild(li);
+    li.appendChild(slider);
+    li.appendChild(caption);
+    slider.appendChild(needle);
+    caption.innerText = Object.keys(dnaAttrs)[xx];
+    li.className = 'slider';
+    slider.className = 'inner-slider';
+    slider.innerText = '|';
+    caption.className = 'slider-caption';
+    var sliderspot = alfa.indexOf(dnaAttrs[caption.innerText])*(30);
+    slider.style.paddingLeft = (sliderspot).toString()+'px';
+    slider.style.width = (276-sliderspot).toString()+'px';
+  }
   initSoundboard(dnaAttrs);
 };
 
