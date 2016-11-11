@@ -47,6 +47,7 @@
 	Window.newGame = function (settings) {
 	  var initializeCanvas; var initializeWorld;
 	  var intervalFunction; var play; var randomDNA; var seedCells;
+	  var initSoundboard; var openSoundboard;
 	  // 1. REQUIRE DEPENDENCIES //
 	  var objects; var Cell; var Person;
 	  objects = __webpack_require__(1);
@@ -164,12 +165,47 @@
 	  play();
 	};
 	
+	initSoundboard = function (dnaAttrs) {
+	  var head = document.getElementById('soundboard-header');
+	  head.innerText = dnaAttrs.sequence;
+	};
+	
+	openSoundboard = function (soundboard, dna) {
+	  var dnaAttrs; var sequence;
+	  soundboard.className = 'soundboard activeboard';
+	  sequence = dna.innerText;
+	  dnaAttrs = {};
+	  dnaAttrs.sequence = sequence;
+	  dnaAttrs.redness = sequence.slice(0,1);
+	  dnaAttrs.greenness = sequence.slice(1,2);
+	  dnaAttrs.blueness = sequence.slice(2,3);
+	  dnaAttrs.splitRadius = sequence.slice(3,4);
+	  dnaAttrs.agility = sequence.slice(4,5);
+	  dnaAttrs.autotrophy = sequence.slice(5,6);
+	  dnaAttrs.foodChainPlace = sequence.slice(6,7);
+	  dnaAttrs.omnivorousness = sequence.slice(7,8);
+	  dnaAttrs.efficiency = sequence.slice(8,9);
+	  dnaAttrs.preySeeking = sequence.slice(9,10);
+	  dnaAttrs.predatorFleeing = sequence.slice(10,11);
+	  dnaAttrs.sightRadius = sequence.slice(11,12);
+	  dnaAttrs.spreadRadius = sequence.slice(12,13);
+	  dnaAttrs.litterSize = sequence.slice(13,14);
+	  initSoundboard(dnaAttrs);
+	};
+	
 	window.onload = function () {
 	  var settings = {};
 	  var ignition = document.getElementById('ignition');
-	  var menu = document.getElementsByClassName('menu')[0];
+	  var container = document.getElementsByClassName('container')[0];
+	  var sequences = document.getElementsByClassName('dna-sequence');
+	  var soundboard = document.getElementsByClassName('soundboard')[0];
+	  var xx; var dna;
+	  for (xx=0 ; xx < sequences.length ; xx++) {
+	    dna = sequences[xx];
+	    dna.onclick = openSoundboard(soundboard, dna);
+	  }
 	  ignition.onclick = function () {
-	    menu.className = 'hidden';
+	    container.className = 'hidden';
 	    settings.cells = [
 	      {
 	        // AUTOTROPHS
