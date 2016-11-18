@@ -47,7 +47,7 @@
 	Window.newGame = function (settings) {
 	  var initializeCanvas; var initializeWorld;
 	  var intervalFunction; var play; var randomDNA; var seedCells;
-	  var initSoundboard; var openSoundboard;
+	  var initSoundboard; var openSoundboard; var setupAdderButtons;
 	  // 1. REQUIRE DEPENDENCIES //
 	  var objects; var Cell; var Person;
 	  objects = __webpack_require__(1);
@@ -97,11 +97,15 @@
 	  };
 	
 	  // 4. INITIALIZE WORLD //
-	  initializeWorld = function () {
-	    var xx;
-	    for (xx=0 ; xx < settings.cells.length ; xx++) {
-	      seedCells(settings.cells[xx].dna, 1, settings.cells[xx].count);
+	  initializeWorld = function (cells) {
+	    var xx; var cell;
+	    for (xx=0 ; xx<cells.length ; xx++) {
+	      cell = cells[xx];
+	      seedCells(cell.dna, 1, cell.count);
 	    }
+	    // for (xx=0 ; xx < settings.cells.length ; xx++) {
+	    //   seedCells(settings.cells[xx].dna, 1, settings.cells[xx].count);
+	    // }
 	    // seedCells(randomDNA(), Math.random()*5+1, 12); // Random
 	    // objects.push(new Person(
 	    //   objects.length,
@@ -137,9 +141,9 @@
 	    for (xx=0; xx < objects.length; xx++) {
 	      if (objects[xx]) {
 	        count += 1;
-	        if (count > 800) {
-	          if (objects[xx-800]) {
-	            objects[xx-800].radius -= 0.1;
+	        if (count > 1000) {
+	          if (objects[xx-1000]) {
+	            objects[xx-1000].radius -= 0.1;
 	          } else {
 	            objects[xx].radius -= 0.1;
 	          }
@@ -158,7 +162,15 @@
 	  // 6. PLAY //
 	  play = function () {
 	    var interval; var xx;
-	    initializeWorld();
+	    var cells = []; var cellSections; var cell;
+	    cellSections = document.getElementsByClassName('germ-type');
+	    for (xx=0 ; xx<cellSections.length ; xx++) {
+	      cell = {};
+	      cell.dna = cellSections[xx].children[0].innerText;
+	      cell.count = cellSections[xx].children[1].value;
+	      cells.push(cell);
+	    }
+	    initializeWorld(cells);
 	    interval = setInterval(intervalFunction, 16);
 	  };
 	  initializeCanvas();
@@ -171,9 +183,11 @@
 	};
 	
 	openSoundboard = function (soundboard, dna) {
-	  var dnaAttrs; var sequence; var li; var slider;
-	  var caption; var needle; var xx; var alfa;
+	  var dnaAttrs; var sequence; var li; var slider; var value;
+	  var caption; var needle; var xx; var yy; var alfa; var head;
+	  var sliderClickEvent; var resetSequence;
 	  alfa = ['A','B','C','D','E','F','G','H','I','J',];
+	  head = document.getElementById('soundboard-header');
 	  soundboard.className = 'soundboard activeboard';
 	  sequence = dna.innerText;
 	  dnaAttrs = {};
@@ -190,14 +204,40 @@
 	  dnaAttrs['prey seeking'] = sequence.slice(9,10);
 	  dnaAttrs['predator fleeing'] = sequence.slice(10,11);
 	  dnaAttrs['field of vision'] = sequence.slice(11,12);
-	  dnaAttrs['reproduction radius'] = sequence.slice(12,13);
-	  dnaAttrs['offspring volume'] = sequence.slice(13,14);
+	  dnaAttrs['offspring scattering'] = sequence.slice(12,13);
+	  dnaAttrs['offspring number'] = sequence.slice(13,14);
+	  sliderClickEvent = function (event) {
+	    value = this.value+event.offsetX-1;
+	    this.style.borderLeft = (value+6).toString()+'px solid #aaffaa';
+	    this.style.width = (276-value-6).toString()+'px';
+	    dnaAttrs[this.caption] = alfa[Math.round((this.value+event.offsetX-1)/270*9)];
+	    this.value = value;
+	    resetSequence(dnaAttrs);
+	  };
+	  resetSequence = function (dnaAttrs) {
+	    var string = ''; var keys; var zz;
+	
+	    keys = Object.keys(dnaAttrs);
+	    for (zz=1 ; zz<keys.length ; zz++) {
+	      if (!dnaAttrs[keys[zz]]) {
+	      }
+	      string += dnaAttrs[keys[zz]];
+	    }
+	    dna.innerText = string;
+	    head.innerText = dna.innerText;
+	  };
+	  if (soundboard.childrenRecord) {
+	    for (yy=0 ; yy<soundboard.childrenRecord.length ; yy++) {
+	      soundboard.removeChild(soundboard.childrenRecord[yy]);
+	    }
+	  }
+	  soundboard.childrenRecord = [];
 	  for (xx=1 ; xx < Object.keys(dnaAttrs).length ; xx++) {
-	    // console.log(dnaAttrs[Object.keys(dnaAttrs)[xx]]);
 	    li = document.createElement('li');
 	    slider = document.createElement('slider');
 	    caption = document.createElement('caption');
 	    needle = document.createElement('needle');
+	    soundboard.childrenRecord.push(li);
 	    soundboard.appendChild(li);
 	    li.appendChild(slider);
 	    li.appendChild(caption);
@@ -205,13 +245,43 @@
 	    caption.innerText = Object.keys(dnaAttrs)[xx];
 	    li.className = 'slider';
 	    slider.className = 'inner-slider';
-	    slider.innerText = '|';
 	    caption.className = 'slider-caption';
 	    var sliderspot = alfa.indexOf(dnaAttrs[caption.innerText])*(30);
-	    slider.style.paddingLeft = (sliderspot).toString()+'px';
-	    slider.style.width = (276-sliderspot).toString()+'px';
+	    slider.style.borderLeft = (sliderspot+6).toString()+'px solid #aaffaa';
+	    slider.style.width = (276-sliderspot-6).toString()+'px';
+	    slider.value = sliderspot;
+	    slider.caption = caption.innerText;
+	    slider.onclick = sliderClickEvent.bind(slider);
 	  }
 	  initSoundboard(dnaAttrs);
+	};
+	
+	setupAdderButtons = function () {
+	  var soundboard = document.getElementsByClassName('soundboard')[0];
+	  var addAutotroph = document.getElementById('autotroph-add');
+	  var addHerbivore = document.getElementById('herbivore-add');
+	  var addCarnivore = document.getElementById('carnivore-add');
+	  var germsList = document.getElementById('germs-list');
+	  var addGerm;
+	  addGerm = function (dna) {
+	    var germ; var sequence; var num;
+	    germ = document.createElement('section');
+	    germ.className = 'germ-type';
+	    sequence = document.createElement('div');
+	    sequence.className = 'dna-sequence';
+	    sequence.innerText = dna;
+	    num = document.createElement('input');
+	    num.className = 'input num';
+	    num.type = 'number';
+	    num.value = 1;
+	    germ.appendChild(sequence);
+	    germ.appendChild(num);
+	    germsList.appendChild(germ);
+	    sequence.onclick = openSoundboard.bind(this, soundboard, sequence);
+	  };
+	  addAutotroph.onclick = addGerm.bind(this, 'AJAAADACEDFCHA');
+	  addHerbivore.onclick = addGerm.bind(this, 'AAJEJHDGHDBDJB');
+	  addCarnivore.onclick = addGerm.bind(this, 'JAACGIECFCFHGB');
 	};
 	
 	window.onload = function () {
@@ -223,8 +293,9 @@
 	  var xx; var dna;
 	  for (xx=0 ; xx < sequences.length ; xx++) {
 	    dna = sequences[xx];
-	    dna.onclick = openSoundboard(soundboard, dna);
+	    dna.onclick = openSoundboard.bind(this, soundboard, dna);
 	  }
+	  setupAdderButtons();
 	  ignition.onclick = function () {
 	    container.className = 'hidden';
 	    settings.cells = [
@@ -281,7 +352,7 @@
 	  this.dna = dna;
 	  this.radius = radius;
 	  this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
-	  this.agility = alfa.indexOf(this.dna.slice(4,5))/4;
+	  this.agility = alfa.indexOf(this.dna.slice(4,5))/4+0.2;
 	  this.autotroph = halfAlfa.includes(this.dna.slice(5,6));
 	  var r; var g; var b; var colors;
 	  r = (alfa.indexOf(this.dna.slice(0,1))*28).toString(16);
@@ -354,6 +425,10 @@
 	  }
 	  if (this.age > 1600) {
 	    this.radius -= this.efficiency/2;
+	  }
+	  if (this.speed.x === 0 && this.speed.y === 0 && !this.autotroph) {
+	    this.speed.x = this.agility*(Math.round(Math.random())*2-1);
+	    this.speed.y = this.agility*(Math.round(Math.random())*2-1);
 	  }
 	  this.wrap();
 	};
