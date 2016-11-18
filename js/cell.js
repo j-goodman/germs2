@@ -91,7 +91,7 @@ Cell.prototype.act = function () {
     this.pos.x += this.speed.x;
     this.pos.y += this.speed.y;
   }
-  if (this.age > 1600) {
+  if (this.age > 2400) {
     this.radius -= this.efficiency/2;
   }
   if (this.speed.x === 0 && this.speed.y === 0 && !this.autotroph) {
