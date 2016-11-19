@@ -53,7 +53,7 @@
 	  objects = __webpack_require__(1);
 	  Cell = __webpack_require__(2);
 	  Person = __webpack_require__(4);
-	
+
 	  // 2. INITIALIZE CANVAS //
 	  initializeCanvas = function () {
 	    var canvas; var ctx;
@@ -71,7 +71,7 @@
 	    };
 	    window.time = 0;
 	  };
-	
+
 	  // 3. SET UP SEEDING HELPER FUNCTIONS //
 	  randomDNA = function () {
 	    var alfa; var string;
@@ -82,7 +82,7 @@
 	    }
 	    return string;
 	  };
-	
+
 	  seedCells = function (dna, radius, count) {
 	    var ff;
 	    for (ff=0 ; ff < count ; ff++) {
@@ -95,7 +95,7 @@
 	      ));
 	    }
 	  };
-	
+
 	  // 4. INITIALIZE WORLD //
 	  initializeWorld = function () {
 	    var xx;
@@ -111,7 +111,7 @@
 	    //   'AAJEJHDGHDBDJB'
 	    // ));
 	  };
-	
+
 	  // 0: redness (A-J)
 	  // 1: greenness (A-J)
 	  // 2: blueness (A-J)
@@ -126,8 +126,8 @@
 	  // 11: sight radius (A-E/F-J)
 	  // 12: spread radius on replication (A-J)
 	  // 13: litter size (A-J)
-	
-	
+
+
 	  // 5. DEFINE INTERVAL FUNCTION //
 	  intervalFunction = function () {
 	    window.cooldown = true;
@@ -154,7 +154,7 @@
 	    }
 	    window.time++;
 	  };
-	
+
 	  // 6. PLAY //
 	  play = function () {
 	    var interval; var xx;
@@ -164,12 +164,12 @@
 	  initializeCanvas();
 	  play();
 	};
-	
+
 	initSoundboard = function (dnaAttrs) {
 	  var head = document.getElementById('soundboard-header');
 	  head.innerText = dnaAttrs.sequence;
 	};
-	
+
 	openSoundboard = function (soundboard, dna) {
 	  var dnaAttrs; var sequence; var li; var slider;
 	  var caption; var needle; var xx; var alfa;
@@ -213,7 +213,7 @@
 	  }
 	  initSoundboard(dnaAttrs);
 	};
-	
+
 	window.onload = function () {
 	  var settings = {};
 	  var ignition = document.getElementById('ignition');
@@ -231,11 +231,11 @@
 	      {
 	        // AUTOTROPHS
 	        dna: 'AJAAADACEDFCHA',
-	        count: 1,
+	        count: 12,
 	      }, {
 	        // BLUE HERBIVORES
 	        dna: 'AAJEJHDGHDBDJB',
-	        count: 0,
+	        count: 1,
 	      }, {
 	        // RED CARNIVORES
 	        dna: 'JAACGIECFCFHGB',
@@ -266,7 +266,7 @@
 	alfa = ['A','B','C','D','E','F','G','H','I','J',];
 	halfAlfa = ['A','B','C','D','E',];
 	threeQuartAlfa = ['A','B','C','D','E','F','G'];
-	
+
 	Cell = function (index, x, y, radius, dna) {
 	  this.index = index;
 	  this.pos = {
@@ -309,7 +309,7 @@
 	  this.maxY = window.innerHeight*0.97;
 	  this.maxX = window.innerWidth*0.97;
 	};
-	
+
 	// 0: redness (A-J)
 	// 1: greenness (A-J)
 	// 2: blueness (A-J)
@@ -324,14 +324,14 @@
 	// 11: sight radius (A-E/F-J)
 	// 12: spread radius on replication (A-J)
 	// 13: litter size (A-J)
-	
+
 	Cell.prototype.draw = function (ctx) {
 	  ctx.beginPath();
 	  ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2*Math.PI);
 	  ctx.fillStyle = this.color;
 	  ctx.fill();
 	};
-	
+
 	Cell.prototype.act = function () {
 	  this.age++;
 	  if (this.predatorFleeing) {
@@ -357,7 +357,7 @@
 	  }
 	  this.wrap();
 	};
-	
+
 	Cell.prototype.wrap = function () {
 	  if (this.pos.x > this.maxX+this.radius) {
 	    this.pos.x = 0;
@@ -370,16 +370,16 @@
 	    this.pos.y = this.maxY;
 	  }
 	};
-	
+
 	Cell.prototype.autotrophize = function () {
 	  this.radius += this.efficiency/12;
 	};
-	
+
 	Cell.prototype.carnivorize = function (target) {
 	  this.radius += this.efficiency;
 	  target.radius -= this.efficiency;
 	};
-	
+
 	Cell.prototype.seekPrey = function () {
 	  var bb; var target;
 	  for (bb=0 ; bb < objects.length ; bb++) {
@@ -397,7 +397,7 @@
 	    this.goTo(target.pos);
 	  }
 	};
-	
+
 	Cell.prototype.fleePredators = function () {
 	  var cc; var predator;
 	  for (cc=0 ; cc < objects.length ; cc++) {
@@ -414,7 +414,7 @@
 	    this.speed.y *= (-1);
 	  }
 	};
-	
+
 	Cell.prototype.checkForPrey = function () {
 	  var dd;
 	  for (dd=0 ; dd < objects.length ; dd++) {
@@ -428,7 +428,7 @@
 	    }
 	  }
 	};
-	
+
 	var copyTrait;
 	copyTrait = function (char) {
 	  var idx;
@@ -441,7 +441,7 @@
 	  }
 	  return alfa[idx];
 	};
-	
+
 	Cell.prototype.replicateDNA = function (input) {
 	  var aa; var output;
 	  output = '';
@@ -450,7 +450,7 @@
 	  }
 	  return output;
 	};
-	
+
 	Cell.prototype.replicate = function () {
 	  if (!window.cooldown) {
 	    this.radius = this.splitRadius;
@@ -477,20 +477,22 @@
 	  }
 	  this.destroy();
 	};
-	
+
 	Cell.prototype.goTo = function (target) {
-	  this.speed.x = -((this.pos.x - target.x)/(Math.sqrt(
-	    Math.pow((this.pos.x - target.x), 2) + Math.pow((this.pos.y - target.y), 2)
-	  )/this.agility));
-	  this.speed.y = -((this.pos.y - target.y)/(Math.sqrt(
-	    Math.pow((this.pos.x - target.x), 2) + Math.pow((this.pos.y - target.y), 2)
-	  )/this.agility));
+	  if (!this.autotroph) {
+	    this.speed.x = -((this.pos.x - target.x)/(Math.sqrt(
+	      Math.pow((this.pos.x - target.x), 2) + Math.pow((this.pos.y - target.y), 2)
+	    )/this.agility));
+	    this.speed.y = -((this.pos.y - target.y)/(Math.sqrt(
+	      Math.pow((this.pos.x - target.x), 2) + Math.pow((this.pos.y - target.y), 2)
+	    )/this.agility));
+	  }
 	};
-	
+
 	Cell.prototype.destroy = function () {
 	  objects[this.index] = undefined;
 	};
-	
+
 	module.exports = Cell;
 
 
@@ -499,19 +501,19 @@
 /***/ function(module, exports) {
 
 	var Util = {};
-	
+
 	Util.inherits = function (ChildClass, BaseClass) {
 	  function Surrogate () { this.constructor = ChildClass; }
 	  Surrogate.prototype = BaseClass.prototype;
 	  ChildClass.prototype = new Surrogate();
 	};
-	
+
 	Util.distanceBetween = function (firstPos, secondPos) {
 	  xGap = Math.abs(firstPos.x - secondPos.x);
 	  yGap = Math.abs(firstPos.y - secondPos.y);
 	  return(Math.sqrt(xGap*xGap+yGap*yGap));
 	};
-	
+
 	module.exports = Util;
 
 
@@ -527,7 +529,7 @@
 	alfa = ['A','B','C','D','E','F','G','H','I','J',];
 	halfAlfa = ['A','B','C','D','E',];
 	threeQuartAlfa = ['A','B','C','D','E','F','G'];
-	
+
 	Person = function (index, x, y, radius, dna) {
 	  this.index = index;
 	  this.pos = {
@@ -589,10 +591,10 @@
 	  };
 	  this.initializeKeyControls();
 	};
-	
+
 	Util.inherits(Person, Cell);
-	
-	
+
+
 	Person.prototype.draw = function (ctx) {
 	  var rad = 2*Math.PI/360;
 	  ctx.beginPath();
@@ -600,7 +602,7 @@
 	  ctx.fillStyle = this.color;
 	  ctx.fill();
 	};
-	
+
 	Person.prototype.replicate = function (persist) {
 	  if (!window.cooldown) {
 	    this.radius = this.splitRadius;
@@ -631,7 +633,7 @@
 	  this.radius = this.radius/litter;
 	  this.mutate(offspring);
 	};
-	
+
 	Person.prototype.mutate = function (offspring) {
 	  this.dna = this.replicateDNA(this.dna);
 	  this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
@@ -656,7 +658,7 @@
 	  this.litterSize = Math.floor(alfa.indexOf(this.dna.slice(12,13))/2)+2;
 	  this.spread = alfa.indexOf(this.dna.slice(11,12))*7;
 	};
-	
+
 	Person.prototype.act = function () {
 	  if (this.spin) {
 	    this.direction += this.spin;
@@ -677,7 +679,7 @@
 	  }
 	  this.wrap();
 	};
-	
+
 	module.exports = Person;
 
 
