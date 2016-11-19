@@ -21,7 +21,7 @@ Cell = function (index, x, y, radius, dna) {
   this.radius = radius;
   this.splitRadius = alfa.indexOf(this.dna.slice(3,4))*6+2;
   this.autotroph = halfAlfa.includes(this.dna.slice(5,6));
-  this.agility = (this.autotroph) ? 0 : alfa.indexOf(this.dna.slice(4,5))/4;
+  this.agility = (this.autotroph) ? 0 : alfa.indexOf(this.dna.slice(4,5))/4+0.25;
   var r; var g; var b; var colors;
   r = (alfa.indexOf(this.dna.slice(0,1))*28).toString(16);
   g = (alfa.indexOf(this.dna.slice(1,2))*28).toString(16);
@@ -91,8 +91,12 @@ Cell.prototype.act = function () {
     this.pos.x += this.speed.x;
     this.pos.y += this.speed.y;
   }
-  if (this.age > 1600) {
+  if (this.age > 2400) {
     this.radius -= this.efficiency/2;
+  }
+  if (this.speed.x === 0 && this.speed.y === 0 && !this.autotroph) {
+    this.speed.x = this.agility*(Math.round(Math.random())*2-1);
+    this.speed.y = this.agility*(Math.round(Math.random())*2-1);
   }
   this.wrap();
 };
