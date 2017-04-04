@@ -203,9 +203,6 @@ Cell.prototype.replicate = function () {
   }
   var litter; var randox; var randoy; var ee;
   litter = this.litterSize;
-  if (this.autotroph) {
-    litter = Math.round(this.litterSize/4);
-  }
   if (litter < 2) { litter = 2; }
   for (ee=0 ; ee < litter ; ee++) {
     randox = 0-this.spread/2+Math.random()*this.spread;

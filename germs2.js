@@ -103,9 +103,9 @@
 	      cell = cells[xx];
 	      seedCells(cell.dna, 1, cell.count);
 	    }
-	    // for (xx=0 ; xx < settings.cells.length ; xx++) {
-	    //   seedCells(settings.cells[xx].dna, 1, settings.cells[xx].count);
-	    // }
+	    for (xx=0 ; xx < settings.cells.length ; xx++) {
+	      seedCells(settings.cells[xx].dna, 1, settings.cells[xx].count);
+	    }
 	    // seedCells(randomDNA(), Math.random()*5+1, 12); // Random
 	    // objects.push(new Person(
 	    //   objects.length,
@@ -287,6 +287,7 @@
 	window.onload = function () {
 	  var settings = {};
 	  var ignition = document.getElementById('ignition');
+	  var autoIgnition = document.getElementById('auto-ignition');
 	  var container = document.getElementsByClassName('container')[0];
 	  var sequences = document.getElementsByClassName('dna-sequence');
 	  var soundboard = document.getElementsByClassName('soundboard')[0];
@@ -302,7 +303,7 @@
 	      {
 	        // AUTOTROPHS
 	        dna: 'AJAAADACEDFCHA',
-	        count: 1,
+	        count: 0,
 	      }, {
 	        // BLUE HERBIVORES
 	        dna: 'AAJEJHDGHDBDJB',
@@ -313,6 +314,26 @@
 	        count: 0,
 	      },
 	    ];
+	    Window.newGame(settings);
+	  };
+	  autoIgnition.onclick = function () {
+	    container.className = 'hidden';
+	    settings.cells = [
+	      {
+	        // AUTOTROPHS
+	        dna: 'AJAAADACEDFCHA',
+	        count: 30,
+	      }, {
+	        // BLUE HERBIVORES
+	        dna: 'AAJEJHDGHDBDJB',
+	        count: 4,
+	      }, {
+	        // RED CARNIVORES
+	        dna: 'JAACGIECFCFHGB',
+	        count: 1,
+	      },
+	    ];
+	    console.log(settings);
 	    Window.newGame(settings);
 	  };
 	};
@@ -535,9 +556,6 @@
 	  }
 	  var litter; var randox; var randoy; var ee;
 	  litter = this.litterSize;
-	  if (this.autotroph) {
-	    litter = Math.round(this.litterSize/4);
-	  }
 	  if (litter < 2) { litter = 2; }
 	  for (ee=0 ; ee < litter ; ee++) {
 	    randox = 0-this.spread/2+Math.random()*this.spread;
