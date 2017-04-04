@@ -19,7 +19,9 @@
     <div class='soundboard-header' id='soundboard-header'></div>
   </section>
 </section>
-<canvas id="canvas" width="860" height="480"></canvas>
+<section class='canvas-frame'>
+  <canvas id="canvas" width="860" height="480"></canvas>
+</section>
 
 <style media="screen">
   body {
@@ -27,6 +29,12 @@
     font-family: monospace;
     font-size: 16px;
     font-weight: 100;
+  }
+
+  .canvas-frame {
+    align-items: center;
+    display: flex;
+    justify-content: center;
   }
 
   canvas {
