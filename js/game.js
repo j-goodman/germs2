@@ -217,7 +217,7 @@ setupAdderButtons = function () {
   var addCarnivore = document.getElementById('carnivore-add');
   var germsList = document.getElementById('germs-list');
   var addGerm;
-  addGerm = function (dna) {
+  addGerm = function (dna, count) {
     var germ; var sequence; var num;
     germ = document.createElement('section');
     germ.className = 'germ-type';
@@ -228,6 +228,9 @@ setupAdderButtons = function () {
     num.className = 'input num';
     num.type = 'number';
     num.value = 1;
+    if (count) {
+        num.value = count;
+    }
     germ.appendChild(sequence);
     germ.appendChild(num);
     germsList.appendChild(germ);
@@ -236,6 +239,9 @@ setupAdderButtons = function () {
   addAutotroph.onclick = addGerm.bind(this, 'AJAAADACEDFCHA');
   addHerbivore.onclick = addGerm.bind(this, 'AAJEJHDGHDBDJB');
   addCarnivore.onclick = addGerm.bind(this, 'JAACGIECFCFHGB');
+  addGerm('AJAAADACEDFCHA', 32);
+  addGerm('AAJEJHDGHDBDJB', 6);
+  addGerm('JAACGIECFCFHGB', 2);
 };
 
 window.onload = function () {
